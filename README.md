@@ -1,219 +1,101 @@
-# Fynd AI Engineering Intern – Assignment
+# AI Engineering Internship Assignment – Fynd
 
-This repository contains my submission for the **AI Engineering Intern – Fynd** assignment.
+This project implements a complete AI-powered feedback system with two fully deployed dashboards:
+- A **Public User Feedback Portal**
+- An **Internal Admin Dashboard**
 
-It includes:
-
-- A **User Feedback App** (Streamlit) – customers submit ratings & reviews and get an AI-generated reply
-- An **Admin Dashboard** (Streamlit) – internal view of all feedback + analytics
-- A **prompting notebook** for **Task 1 – Rating Prediction via Prompting**
-- A short **report (PDF)** summarizing the approach and results
+Both dashboards are backed by a single shared data source and use Google Gemini for AI-powered responses, summaries, and business insights.
 
 ---
 
-## 📁 Project Structure
+## 🔗 Live Applications
 
-```text
-fynd-assignment/
-├── admin_app.py                     # Admin analytics dashboard (Streamlit)
-├── user_app.py                      # User feedback portal (Streamlit)
-├── fynd_task1_rating_prompting.ipynb# Task 1 notebook (Yelp rating via prompts)
-├── yelp.csv                         # Sampled/cleaned Yelp dataset used in Task 1
-├── feedback.csv                     # Stored feedback from user app
-├── feedback_log.csv                 # Optional log of submissions
-├── report.pdf                       # Assignment report (Task 1 + apps)
-├── requirements.txt                 # Python dependencies
-└── README.md                        # This file
-🌐 Live Apps
-User Feedback App
-👉 https://fynd-assignment-fwgwkcfa9fbhhckzx35wrs.streamlit.app/
+### User Dashboard (Public)
+https://fynd-assignment-fwgwkcfa9fbhhckzx35wrs.streamlit.app/
 
-Admin Dashboard
-👉 https://fynd-assignment-yrbtvmcjurvfkvssd6wfpi.streamlit.app/
+### Admin Dashboard (Internal)
+https://fynd-assignment-yrbtvmcjurvfkvssd6wfpi.streamlit.app/
 
-🧪 Task 1 – Rating Prediction via Prompting
-Notebook: fynd_task1_rating_prompting.ipynb
+### GitHub Repository
+https://github.com/zaidrazavi/fynd-assignment/tree/main
 
-Goal:
-Given a Yelp review, predict a rating from 1–5 stars using prompting only, returning:
+---
 
-json
+## ✅ Features
+
+### User Dashboard
+Users can:
+- Select a star rating (1–5)
+- Submit a review
+- Instantly receive an AI-generated response
+- All submissions are stored in a shared CSV file
+
+### Admin Dashboard
+Admins can view:
+- Live table of all feedback
+- User ratings & reviews
+- AI-generated summaries
+- AI-recommended business actions
+
+Additional analytics:
+- Total feedback count
+- Average rating
+- Low-rating count
+- Ratings distribution chart
+- Recent feedback panel
+
+---
+
+##  AI Usage
+
+Gemini API is used for:
+- Generating user replies
+- Summarizing reviews
+- Suggesting recommended actions for business improvement
+
+---
+
+##  Technologies Used
+
+- Python
+- Streamlit
+- Google Gemini (google-genai)
+- Pandas
+- NumPy
+- Plotly
+- CSV-based data storage
+
+---
+
+## 📂 Project Structure
+
+Fynd_Assessment/
+│
+├── user_app.py
+├── admin_app.py
+├── fynd_task1_rating_prompting.ipynb
+├── yelp.csv
+├── feedback.csv
+├── feedback_log.csv
+├── Summary_Report.pdf
+├── requirements.txt
+└── README.md
+
+yaml
 Copy code
-{
-  "predicted_stars": 4,
-  "explanation": "Brief reasoning for the assigned rating."
-}
-Dataset
-Kaggle Yelp Reviews dataset (subset)
 
-Columns used: text (review), stars (actual rating 1–5)
+---
 
-Cleaning & Sampling
-Removed rows with missing stars or text
+## ⚠️ Notes
 
-Kept ratings between 1 and 5
+Feedback is stored in a CSV file. Since Streamlit Cloud uses ephemeral storage, the file may reset on redeployment.
+In a production system, this would be replaced with a database such as PostgreSQL or Firebase.
 
-Lowercased text, removed URLs, punctuation and extra spaces
+---
 
-Sampled a subset of reviews for evaluation
+## 👤 Author
 
-Prompt Variants
-Three prompt styles were tested:
-
-Prompt 1 – Strict rater
-
-Short rubric, clear mapping 1–5
-
-Force JSON output
-
-Prompt 2 – Step-by-step reasoning
-
-First classify sentiment and intensity
-
-Then map to rating 1–5
-
-Still forced JSON output
-
-Prompt 3 – Aspect-based
-
-Ask model to separately consider food, service, ambiance, price
-
-Then decide final rating from 1–5
-
-Force JSON output
-
-Each prompt instructs the model to return only JSON with predicted_stars and explanation.
-
-Evaluation
-For each prompt we measured:
-
-Accuracy – (predicted_stars == actual)
-
-JSON validity rate – share of responses parsed successfully as valid JSON
-
-Example summary (for the sampled set used in my run):
-
-Prompt	Accuracy	JSON Validity
-Prompt 1	0.38	0.11
-Prompt 2	0.36	0.10
-Prompt 3	0.38	0.09
-
-Short Discussion
-All three prompts achieved similar accuracy, around 35–38% on the sampled reviews.
-
-Prompt 1 (simplest) was already competitive, showing that a clear rubric works well.
-
-Prompt 2 and Prompt 3 sometimes produced overly long explanations or slightly off-format JSON, which reduced JSON validity rate.
-
-The main failure modes:
-
-Confusing mixed reviews (good food / bad service)
-
-Being too generous with 4–5 star ratings
-
-Rarely outputting invalid JSON (extra text around the JSON or different key name)
-
-💻 Apps Overview
-1. User Feedback App – user_app.py
-Features:
-
-User selects a rating (1–5) and writes a short review
-
-App calls Gemini API to generate:
-
-A friendly response to the user
-
-It also stores:
-
-rating
-
-review
-
-AI reply
-
-Recent feedback is shown in a table for the user’s session
-
-2. Admin Dashboard – admin_app.py
-Features:
-
-Loads feedback.csv generated by the user app
-
-Shows a raw feedback table:
-
-user rating
-
-review text
-
-AI reply
-
-AI summary (optional)
-
-AI-recommended actions (optional)
-
-Summary analytics:
-
-total number of feedback entries
-
-average rating
-
-count of low ratings (≤ 2)
-
-Rating distribution chart
-
-Latest feedback section
-
-The admin dashboard and user app both read from / write to the same data source (feedback.csv).
-
-⚙️ Local Setup
-Clone the repo
-
-bash
-Copy code
-git clone https://github.com/zaidrazavi/fynd-assignment.git
-cd fynd-assignment
-Install dependencies
-
-bash
-Copy code
-pip install -r requirements.txt
-Set the Gemini API key
-
-On Windows (PowerShell):
-
-bash
-Copy code
-setx GEMINI_API_KEY "your_api_key_here"
-On Linux / macOS:
-
-bash
-Copy code
-export GEMINI_API_KEY="your_api_key_here"
-Run the apps
-
-User app:
-
-bash
-Copy code
-streamlit run user_app.py
-Admin app:
-
-bash
-Copy code
-streamlit run admin_app.py
-🧰 Tech Stack
-Python
-
-Streamlit
-
-Gemini API (google-genai)
-
-Pandas, NumPy
-
-Plotly (for charts)
-
-👤 Author
-Mohd Zayed Kazim Shalil (Zaid Razavi)
+Mohd Zayed Kazim Shalil 
 AI Engineering Intern Applicant – Fynd
 
-markdown
-Copy code
+
