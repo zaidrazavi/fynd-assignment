@@ -4,16 +4,16 @@ from google import genai
 import pandas as pd
 
 
-# ===================== CONFIG =====================
 
-# Try to read key from environment variable
+
+
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-# If not set, fall back to hard-coded key (replace this with your key)
-if not API_KEY:
-    API_KEY = "AIzaSyCwXf98t4tz_xCbrruLCaoCbVVVOWyXww0"  # <<< PUT YOUR KEY HERE
 
-# Create Gemini client
+if not API_KEY:
+    API_KEY = "AIzaSyCwXf98t4tz_xCbrruLCaoCbVVVOWyXww0"  E
+
+
 client = genai.Client(api_key=API_KEY)
 
 
@@ -27,13 +27,13 @@ def generate_reply(prompt: str) -> str:
             model="gemini-2.5-flash",
             contents=prompt,
         )
-        # response.text is a convenience property with concatenated text
+        
         return response.text.strip()
     except Exception as e:
         return f"[AI error] {str(e)}"
 
 
-# ===================== STREAMLIT UI =====================
+
 
 st.set_page_config(page_title="User Feedback Portal", page_icon="⭐", layout="centered")
 
@@ -44,7 +44,7 @@ rating = st.selectbox("Rating (1 = worst, 5 = best)", [1, 2, 3, 4, 5], index=3)
 review = st.text_area("Your review", height=120)
 
 if "history" not in st.session_state:
-    st.session_state["history"] = []  # store feedback inside the session only
+    st.session_state["history"] = [] 
 
 
 if st.button("Submit"):
@@ -52,7 +52,7 @@ if st.button("Submit"):
         st.warning("Please write a review before submitting.")
     else:
         with st.spinner("Generating AI insights..."):
-            # 1) Summary of the feedback
+           
             summary_prompt = (
                 f"Summarize this restaurant review in ONE short sentence, "
                 f"without adding any new information.\n\n"
@@ -61,7 +61,7 @@ if st.button("Submit"):
             )
             ai_summary = generate_reply(summary_prompt)
 
-            # 2) Recommended action for the business
+          
             action_prompt = (
                 "You are a restaurant operations consultant.\n"
                 "Given the following rating and review, suggest ONE clear, "
@@ -80,7 +80,7 @@ if st.button("Submit"):
             )
             ai_reply = generate_reply(reply_prompt)
 
-        # Save this feedback in session history (for UI)
+        
         record = {
             "rating": rating,
             "review": review,
@@ -109,7 +109,7 @@ if st.button("Submit"):
 
 
 
-# Show previous feedback in this session
+
 if st.session_state["history"]:
     st.markdown("---")
     st.subheader("Recent Feedback (this session)")
@@ -118,3 +118,4 @@ if st.session_state["history"]:
         st.write(f"**Review:** {item['review']}")
         st.write(f"**AI Reply:** {item['ai_reply']}")
         st.write("---")
+
