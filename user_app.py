@@ -11,9 +11,9 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 
 
 if not API_KEY:
-    API_KEY = "AIzaSyCwXf98t4tz_xCbrruLCaoCbVVVOWyXww0"  E
+    API_KEY = "AIzaSyCwXf98t4tz_xCbrruLCaoCbVVVOWyXww0" 
 
-
+# Create Gemini client
 client = genai.Client(api_key=API_KEY)
 
 
@@ -33,7 +33,7 @@ def generate_reply(prompt: str) -> str:
         return f"[AI error] {str(e)}"
 
 
-
+# ===================== STREAMLIT UI =====================
 
 st.set_page_config(page_title="User Feedback Portal", page_icon="⭐", layout="centered")
 
@@ -44,7 +44,7 @@ rating = st.selectbox("Rating (1 = worst, 5 = best)", [1, 2, 3, 4, 5], index=3)
 review = st.text_area("Your review", height=120)
 
 if "history" not in st.session_state:
-    st.session_state["history"] = [] 
+    st.session_state["history"] = []  
 
 
 if st.button("Submit"):
@@ -52,7 +52,7 @@ if st.button("Submit"):
         st.warning("Please write a review before submitting.")
     else:
         with st.spinner("Generating AI insights..."):
-           
+            
             summary_prompt = (
                 f"Summarize this restaurant review in ONE short sentence, "
                 f"without adding any new information.\n\n"
@@ -61,7 +61,7 @@ if st.button("Submit"):
             )
             ai_summary = generate_reply(summary_prompt)
 
-          
+            # 2) Recommended action for the business
             action_prompt = (
                 "You are a restaurant operations consultant.\n"
                 "Given the following rating and review, suggest ONE clear, "
@@ -71,7 +71,7 @@ if st.button("Submit"):
             )
             ai_action = generate_reply(action_prompt)
 
-            # 3) Friendly reply back to the user
+            
             reply_prompt = (
                 f"The user gave a rating of {rating} out of 5 and wrote:\n"
                 f"\"{review}\"\n\n"
@@ -90,7 +90,7 @@ if st.button("Submit"):
         }
         st.session_state["history"].append(record)
 
-        # Also save to CSV for admin dashboard
+        
         df_new = pd.DataFrame([record])
         csv_path = "feedback_log.csv"
 
@@ -118,4 +118,3 @@ if st.session_state["history"]:
         st.write(f"**Review:** {item['review']}")
         st.write(f"**AI Reply:** {item['ai_reply']}")
         st.write("---")
-
